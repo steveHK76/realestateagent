@@ -9,29 +9,72 @@
 <body>
   <div class="leo-agent-container">
     <h1>Leo AI Real Estate Agent</h1>
-    <p>This is a simplified version to test GitHub Pages deployment.</p>
     
-    <div class="video-container">
-      <img src="https://page.genspark.site/v1/base64_upload/c03e488efc283631308cdf91ef58aa04" alt="Leo" width="300">
-    </div>
-    
-    <div class="language-selector">
-      <button>English</button>
-      <button>简体中文</button>
-      <button>繁體中文</button>
-      <button>Italiano</button>
+    <div class="main-content">
+      <div class="video-container">
+        <video id="leo-video" autoplay playsinline></video>
+      </div>
+      
+      <div class="interaction-area">
+        <div class="language-selector">
+          <button data-lang="en" class="active">English</button>
+          <button data-lang="zh-Hans">简体中文</button>
+          <button data-lang="zh-Hant">繁體中文</button>
+          <button data-lang="it">Italiano</button>
+        </div>
+        
+        <div class="chat-container">
+          <div id="chat-messages" class="messages"></div>
+          <div class="input-area">
+            <input type="text" id="message-input" placeholder="Ask Leo about properties...">
+            <button id="send-button">Send</button>
+          </div>
+        </div>
+      </div>
     </div>
     
     <div class="property-section">
       <h3>Featured Properties</h3>
-      <p>Sample property information will appear here.</p>
+      <div id="property-list" class="property-list"></div>
+    </div>
+    
+    <div class="contact-form" id="contact-form">
+      <h3>Get More Information</h3>
+      <form id="user-data-form">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="tel" id="phone" placeholder="Phone Number">
+        <textarea id="interests" placeholder="Tell us more about what you're looking for..."></textarea>
+        <button type="submit">Submit</button>
+      </form>
     </div>
   </div>
-  
-  <script>
-    console.log('Basic script is running!');
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Page fully loaded');
+
+  <script type="module">
+    import RealEstateAgent from './js/real-estate-agent.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      const apiKey = 'c3RlZmFub0BzbWVydC5haQ:upBJMgVLBaraxGJQBq5QN'; // Your D-ID API key
+      const agentId = 'agt_jZTbLbWV'; // Leo's agent ID
+      const leoImageUrl = 'https://page.genspark.site/v1/base64_upload/c03e488efc283631308cdf91ef58aa04'; // Leo's image
+      
+      const agent = new RealEstateAgent(apiKey, agentId, leoImageUrl);
+      await agent.initialize('leo-video', 'chat-messages', 'property-list');
+      
+      // Set up contact form
+      document.getElementById('user-data-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const interests = document.getElementById('interests').value;
+        
+        agent.collectUserData(name, email, phone, interests);
+        
+        // Hide form and show thank you message
+        document.getElementById('contact-form').innerHTML = '<h3>Thank You!</h3><p>A real estate agent will contact you shortly.</p>';
+      });
     });
   </script>
 </body>
